@@ -6,57 +6,82 @@ import { useAuthStore } from "@/lib/store/auth"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Search, MapPin, Briefcase, ChevronRight } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Search, MapPin, Briefcase, ChevronRight, Filter } from "lucide-react"
 
 export default function CompaniesPage() {
   const { token, _hasHydrated } = useAuthStore()
   const [companies, setCompanies] = useState<any[]>([])
-  const [search, setSearch] = useState("")
-
-
+  const [roles, setRoles] = useState<string[]>([])
+  const [selectedRole, setSelectedRole] = useState("All")
 
   useEffect(() => {
-
     if (!token) return
 
+    // Fetch companies
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/student/companies`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
       .then(data => {
         console.log("Fetched companies:", data)
-        setCompanies(Array.isArray(data) ? data : [])
+        const companyList = Array.isArray(data) ? data : []
+        setCompanies(companyList)
+
+        // Extract unique roles from the companies
+        const uniqueRoles = Array.from(new Set(
+          companyList.flatMap(company =>
+            company.roles ? company.roles.map((r: any) => r.title) : []
+          )
+        )).sort()
+
+        setRoles(uniqueRoles as string[])
       })
       .catch(err => console.error("Failed to fetch companies:", err))
   }, [token])
 
-  const filtered = companies.filter(
-    c =>
-      c.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = companies.filter(c => {
+    if (selectedRole === "All") return true
+    return c.roles && c.roles.some((r: any) => r.title === selectedRole)
+  })
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Partner Companies</h1>
-          <p className="text-muted-foreground mt-1">Discover opportunities from top companies</p>
+          <p className="text-muted-foreground mt-1">Discover opportunities based on your preferred role</p>
         </div>
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search companies by name..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:bg-background transition-all"
-          />
+          <Select value={selectedRole} onValueChange={setSelectedRole}>
+            <SelectTrigger className="w-full h-11 bg-muted/20 border-muted-foreground/20 focus:bg-background transition-all">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Filter className="h-4 w-4" />
+                <SelectValue placeholder="Select a role" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All Roles</SelectItem>
+              {roles.map((role) => (
+                <SelectItem key={role} value={role}>
+                  {role}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {filtered.length === 0 ? (
           <div className="col-span-full p-12 border-2 border-dashed rounded-2xl text-center bg-muted/10">
-            <p className="text-muted-foreground">No companies found matching your search.</p>
+            <p className="text-muted-foreground">No companies found matching the selected role.</p>
           </div>
         ) : (
           filtered.map(company => {
