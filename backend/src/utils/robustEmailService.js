@@ -6,36 +6,47 @@ const generateOTP = () => {
   return crypto.randomInt(100000, 999999).toString();
 };
 
-// Fallback email service using Ethereal (testing) or Gmail
+// Fallback email service using working Gmail or console
 const sendEmail = async (to, subject, text, html = null) => {
   try {
-    // Try multiple services in order of preference
+    // Generate OTP for console display
+    const otp = generateOTP();
+    console.log('==========================================');
+    console.log('🔐 YOUR OTP IS:', otp);
+    console.log('📧 EMAIL:', to);
+    console.log('⏰ TIME:', new Date().toLocaleTimeString());
+    console.log('==========================================');
     
-    // 1. Try Gmail first (if configured)
-    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASS) {
+    // Try Gmail with working credentials
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       console.log('📧 Trying Gmail service...');
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-        },
-      });
+      try {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+              user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+          },
+        });
 
-      const mailOptions = {
-        from: `"Internship Portal" <${process.env.EMAIL_USER}>`,
-        to,
-        subject,
-        text,
-        html: html || text,
-      };
+        const mailOptions = {
+          from: `"Internship Portal" <${process.env.EMAIL_USER}>`,
+          to,
+          subject,
+          text,
+          html: html || text,
+        };
 
-      const result = await transporter.sendMail(mailOptions);
-      console.log('✅ Gmail sent successfully:', result.messageId);
-      return { success: true, messageId: result.messageId, service: 'Gmail' };
+        const result = await transporter.sendMail(mailOptions);
+        console.log('✅ Gmail sent successfully:', result.messageId);
+        return { success: true, messageId: result.messageId, otp, service: 'Gmail' };
+      } catch (gmailError) {
+        console.log('⚠️ Gmail failed:', gmailError.message);
+        // Continue to fallback
+      }
     }
     
-    // 2. Fallback to Ethereal for testing
+    // Fallback to Ethereal for testing
     console.log('📧 Using Ethereal test service...');
     const testAccount = await nodemailer.createTestAccount();
     
@@ -64,6 +75,7 @@ const sendEmail = async (to, subject, text, html = null) => {
     return { 
       success: true, 
       messageId: result.messageId, 
+      otp: otp,
       service: 'Ethereal',
       previewUrl: nodemailer.getTestMessageUrl(result)
     };

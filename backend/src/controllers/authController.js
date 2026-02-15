@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const Student = require('../models/Student');
 const Company = require('../models/Company');
-const { sendEmail, generateOTP } = require('../utils/workingEmailService');
+const { sendEmail, generateOTP } = require('../utils/finalEmailService');
 const { generateAndLogOTP } = require('../utils/consoleOTP');
 
 
