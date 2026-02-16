@@ -40,21 +40,20 @@ const startServer = async () => {
     const app = express();
 
     // Enable CORS with more permissive settings for development
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://ifportal-three.vercel.app',
+      'https://ifportal.tvctiet.in'
+    ];
+    
     app.use(cors({
       origin: function (origin, callback) {
-        const allowedOrigins = [
-          "http://localhost:3000",
-          process.env.FRONTEND_URL
-        ];
-    
         if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
-          callback(new Error("Not allowed by CORS"));
+          callback(new Error('Not allowed by CORS'));
         }
       },
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
       credentials: true
     }));
 
