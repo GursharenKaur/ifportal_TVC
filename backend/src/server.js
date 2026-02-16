@@ -10,6 +10,30 @@ dotenv.config();
 
 const startServer = async () => {
   try {
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught Exception:', error);
+      process.exit(1);
+    });
+
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+      process.exit(1);
+    });
+
+    // Handle SIGTERM for graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received, shutting down gracefully');
+      process.exit(0);
+    });
+
+    // Handle SIGINT for graceful shutdown
+    process.on('SIGINT', () => {
+      console.log('SIGINT received, shutting down gracefully');
+      process.exit(0);
+    });
+
     // Connect to database
     await connectDB();
 
@@ -17,7 +41,7 @@ const startServer = async () => {
 
     // Enable CORS with more permissive settings for development
     app.use(cors({
-      origin: 'http://localhost:3000',
+      origin: process.env.FRONTEND_URL || 'http://localhost:3000',
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       credentials: true
