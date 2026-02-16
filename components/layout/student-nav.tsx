@@ -44,7 +44,7 @@ export function StudentNav() {
             />
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tighter text-foreground">Internshp Fair</h1>
+            <h1 className="text-xl font-black tracking-tighter text-foreground">Internship Fair</h1>
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-500/80">Student Journey</p>
           </div>
         </div>
