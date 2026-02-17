@@ -41,13 +41,7 @@ export default function StudentLayout({
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <Image 
-            src="/TVC logo Black.png"
-            alt="TVC Logo" 
-            width={32} 
-            height={32}
-            className="h-8 w-8 animate-spin"
-          />
+         <Loader2 className="h-8 w-8 animate-spin text-cyan-500" />
           <span className="sr-only">Loading...</span>
         </div>
       </div>
