@@ -407,7 +407,7 @@ export default function ApplicantsPage() {
                     <div className="w-full h-96 rounded-[32px] border border-border overflow-hidden bg-foreground/[0.02]">
                       {selectedApplicant?.resumeUrl ? (
                         <iframe
-                          src={`${getResumeUrl(selectedApplicant?.resumeUrl)}#toolbar=0`}
+                          src={`${getResumeUrl(selectedApplicant?.resumeUrl)}?raw=true#toolbar=0`}
                           className="w-full h-full border-none"
                           title="Resume Viewer"
                         />
