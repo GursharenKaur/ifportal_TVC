@@ -135,13 +135,13 @@ export function StudentNav() {
 
       {/* Mobile Sidebar Sheet */}
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetContent side="left" className="w-80 p-0 bg-hsl(var(--sidebar-background)) text-hsl(var(--sidebar-foreground))">
+        <SheetContent side="left" className="w-80 p-0 bg-slate-900 text-white border-r border-slate-700">
           <NavContent />
         </SheetContent>
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-68 bg-hsl(var(--sidebar-background)) text-hsl(var(--sidebar-foreground)) flex flex-col border-r border-hsl(var(--sidebar-border)) transition-colors duration-500 overflow-hidden">
+      <aside className="hidden lg:flex w-68 bg-background text-foreground border-r border-border flex flex-col transition-colors duration-500 overflow-hidden fixed left-0 top-0 h-screen z-40">
         <NavContent />
       </aside>
     </>

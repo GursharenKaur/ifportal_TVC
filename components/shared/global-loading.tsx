@@ -36,9 +36,11 @@ export function GlobalLoading() {
                 <Image
                     src="/TVC logo white.png"
                     alt="TVC Logo"
-                    fill
+                    width={96}
+                    height={96}
                     className="object-contain"
                     priority
+                    unoptimized={true}
                 />
                 <div className="absolute inset-0 rounded-full bg-white/10 blur-2xl" />
             </motion.div>

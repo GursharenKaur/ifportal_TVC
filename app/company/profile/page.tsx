@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { GlassCard } from "@/components/shared/glass-card"
 import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useAuthStore } from "@/lib/store/auth"
 
 interface CompanyData {
   name: string
@@ -24,10 +25,10 @@ interface CompanyData {
 
 export default function CompanyProfilePage() {
   const router = useRouter()
+  const { token, role, _hasHydrated } = useAuthStore()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [companyData, setCompanyData] = useState<CompanyData>({
     name: "",
     email: "",
@@ -39,30 +40,43 @@ export default function CompanyProfilePage() {
   const [logoFile, setLogoFile] = useState<File | null>(null)
 
   useEffect(() => {
-    const checkAuthAndLoadData = async () => {
-      try {
-        const data = await companyApi.getProfile()
-        setCompanyData({
-          name: data.name || "",
-          email: data.email || "",
-          phone: data.phone || "",
-          website: data.website || "",
-          location: data.location || "",
-          about: data.about || "",
-          logoUrl: data.logoUrl
-        })
-        setIsAuthenticated(true)
-      } catch (error) {
-        console.error('Authentication error:', error)
-        router.push('/login')
-        toast.error("Authentication required to access profile.")
-      } finally {
-        setTimeout(() => setIsLoading(false), 800)
-      }
-    }
+    // Wait for auth store to hydrate before checking auth
+    if (!_hasHydrated) return
 
-    checkAuthAndLoadData()
-  }, [router])
+    // Only run on client side
+    if (typeof window !== 'undefined') {
+      // Normalize role by converting to lowercase and trimming whitespace
+      const normalizedRole = role?.toString().toLowerCase().trim()
+      if (!token || normalizedRole !== 'company') {
+        console.log('Redirecting to login. Token:', !!token, 'Role:', role, 'Normalized:', normalizedRole)
+        router.push("/login")
+        toast.error("Authentication required to access company profile.")
+        return
+      }
+
+      const checkAuthAndLoadData = async () => {
+        try {
+          const data = await companyApi.getProfile()
+          setCompanyData({
+            name: data.name || "",
+            email: data.email || "",
+            phone: data.phone || "",
+            website: data.website || "",
+            location: data.location || "",
+            about: data.about || "",
+            logoUrl: data.logoUrl
+          })
+        } catch (error) {
+          console.error('Profile loading error:', error)
+          toast.error("Failed to load company profile.")
+        } finally {
+          setTimeout(() => setIsLoading(false), 800)
+        }
+      }
+
+      checkAuthAndLoadData()
+    }
+  }, [_hasHydrated, token, role, router])
 
   if (isLoading) {
     return (
@@ -80,8 +94,6 @@ export default function CompanyProfilePage() {
       </div>
     )
   }
-
-  if (!isAuthenticated) return null
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

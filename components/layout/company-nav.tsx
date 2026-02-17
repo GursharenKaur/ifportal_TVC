@@ -6,17 +6,20 @@ import { usePathname, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import { useAuthStore } from "@/lib/store/auth"
 import { Button } from "@/components/ui/button"
-import { Briefcase, Users, LayoutDashboard, LogOut, Home, UserCircle, Building2 } from "lucide-react"
+import { Briefcase, Users, LayoutDashboard, LogOut, Home, UserCircle, Building2, Menu } from "lucide-react"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-
 import { motion } from "framer-motion"
+import { useState } from "react"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
 export function CompanyNav() {
   const pathname = usePathname()
   const router = useRouter()
   const { theme } = useTheme()
   const logout = useAuthStore((state) => state.logout)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
@@ -30,8 +33,9 @@ export function CompanyNav() {
     { href: "/company/profile", label: "Profile", icon: Building2 },
   ]
 
-  return (
-    <aside className="w-80 h-screen bg-hsl(var(--sidebar-background)) text-hsl(var(--sidebar-foreground)) border-r border-hsl(var(--sidebar-border)) flex flex-col relative overflow-hidden transition-colors duration-500">
+  const NavContent = () => (
+    <>
+      {/* Logo Section */}
       <div className="p-10 relative z-10 transition-all duration-500">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl flex items-center justify-center">
@@ -50,6 +54,7 @@ export function CompanyNav() {
         </div>
       </div>
 
+      {/* Navigation */}
       <nav className="flex-1 space-y-1.5 p-4 mt-4">
         {navItems.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href
@@ -85,6 +90,7 @@ export function CompanyNav() {
         })}
       </nav>
 
+      {/* Footer */}
       <div className="p-6 border-t border-hsl(var(--sidebar-border)) space-y-6">
         <div className="flex items-center justify-between px-2">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Interface Theme</span>
@@ -100,6 +106,37 @@ export function CompanyNav() {
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Exit Session</span>
         </Button>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Mobile Hamburger Menu */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="bg-background/80 backdrop-blur-sm border border-border"
+        >
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+      </div>
+
+      {/* Mobile Sidebar Sheet */}
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <VisuallyHidden>
+          <SheetContent side="left" className="w-80 p-0 bg-slate-900 text-white border-r border-slate-700">
+            <NavContent />
+          </SheetContent>
+        </VisuallyHidden>
+      </Sheet>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-80 bg-background text-foreground border-r border-border flex flex-col relative overflow-hidden transition-colors duration-500 fixed left-0 top-0 h-screen z-40">
+        <NavContent />
+      </aside>
+    </>
   )
 }
