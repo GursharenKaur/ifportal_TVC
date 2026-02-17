@@ -29,9 +29,8 @@ export const studentApi = {
       formData.append('useExistingResume', 'false')
       if (resumeFile) formData.append('resume', resumeFile)
 
-      const response = await axiosInstance.post('/student/apply', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
+      const response = await axiosInstance.post('/student/apply', formData)
+
       return response.data
     }
   },
