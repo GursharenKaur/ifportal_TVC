@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import Link from "next/link"
 import { motion, AnimatePresence, useMotionTemplate, useMotionValue, animate } from "framer-motion"
 import { ChevronRight, MousePointer2, X, Play } from "lucide-react"
 import { TextReveal } from "@/components/shared/text-reveal"
+import { useRouter } from "next/navigation"
+
 
 export default function LandingPage() {
+  const router = useRouter()
   const COLORS = ["#0ea5e9", "#8b5cf6", "#d946ef", "#0ea5e9"]
   const color = useMotionValue(COLORS[0])
   const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 50% 10%, #000 40%, ${color})`
@@ -95,22 +97,15 @@ export default function LandingPage() {
           transition={{ duration: 0.5, delay: 1.2 }}
           className="mt-12 flex flex-col items-center gap-4 px-4 sm:gap-6 sm:flex-row sm:px-0"
         >
-          <Link href="/login">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-white px-6 py-3 text-sm text-black transition-all hover:bg-zinc-100 sm:px-8 sm:py-4 sm:text-base"
-            >
-              <span className="relative z-10 font-bold">Get Started Now</span>
-              <ChevronRight className="relative z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              <motion.div
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "100%" }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0 z-0 bg-gradient-to-r from-transparent via-cyan-200/50 to-transparent"
-              />
-            </motion.button>
-          </Link>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => router.replace("/login")}
+            className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-white px-6 py-3 text-sm text-black hover:bg-zinc-100 sm:px-8 sm:py-4 sm:text-base"
+          >
+            <span className="relative z-10 font-bold">Get Started Now</span>
+            <ChevronRight className="relative z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
+          </motion.button>
 
           <motion.div
             whileHover={{ x: 5 }}
