@@ -169,13 +169,7 @@ export default function AuthPage() {
                   <Button type="submit" className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-black uppercase tracking-widest transition-all shadow-xl shadow-foreground/10 group" disabled={isLoading}>
                     {isLoading ? (
                       <div className="flex items-center gap-2">
-                        <Image 
-                          src="/TVC logo Black.png"
-                          alt="TVC Logo" 
-                          width={20} 
-                          height={20}
-                          className="h-5 w-5 animate-spin"
-                        />
+                        <Loader2 className="h-5 w-5 animate-spin" />
                         Signing In...
                       </div>
                     ) : (
