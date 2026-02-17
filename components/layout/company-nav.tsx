@@ -97,6 +97,11 @@ export function CompanyNav() {
           <ThemeToggle />
         </div>
 
+              <div className="px-2 py-3 bg-foreground/5 rounded-xl border border-border">
+          <p className="text-[9px] font-medium text-muted-foreground text-center leading-relaxed">
+            For queries contact: <span className="text-cyan-500 font-bold">Edc@thapar.edu</span>
+          </p>
+        </div>
         <Button
           variant="ghost"
           className="w-full h-12 justify-start gap-4 hover:bg-rose-500/10 text-muted-foreground hover:text-rose-500 transition-all rounded-xl group"
