@@ -27,13 +27,18 @@ export const studentApi = {
       const formData = new FormData()
       formData.append('roleId', roleId)
       formData.append('useExistingResume', 'false')
-      if (resumeFile) formData.append('resume', resumeFile)
-
+  
+      if (resumeFile) {
+        formData.append('resume', resumeFile)
+      }
+  
+      // 🚨 DO NOT set Content-Type manually
       const response = await axiosInstance.post('/student/apply', formData)
-
+  
       return response.data
     }
   },
+
 
   async uploadResume(file: File) {
     const formData = new FormData()
