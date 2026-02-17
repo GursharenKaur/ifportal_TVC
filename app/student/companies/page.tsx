@@ -129,7 +129,7 @@ export default function CompaniesPage() {
         ) : (
           filtered.map((company, idx) => {
             const logoUrl = company.logo
-              ? (company.logo.startsWith('http') ? company.logo : `${process.env.NEXT_PUBLIC_BACKEND_URL}${company.logo}`)
+              ? (company.logo.startsWith('http') ? company.logo : `${process.env.NEXT_PUBLIC_API_URL}${company.logo}`)
               : "/favicon.ico"
 
             return (
