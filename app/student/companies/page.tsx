@@ -16,8 +16,8 @@ import { MapPin, Briefcase, ChevronRight, Filter, Search, Sparkles } from "lucid
 import { GlassCard } from "@/components/shared/glass-card"
 import { motion } from "framer-motion"
 import { Skeleton } from "@/components/ui/skeleton"
-const [isOpensetIsOpen] = useState(false)
 export default function CompaniesPage() {
+  const [isOpen, setIsOpen] = useState(false)
   const { token, _hasHydrated } = useAuthStore()
   const [companies, setCompanies] = useState<any[]>([])
   const [roles, setRoles] = useState<string[]>([])
@@ -38,8 +38,8 @@ export default function CompaniesPage() {
 
         const uniqueRoles = Array.from(new Set(
           companyList.flatMap(company =>
-            company.roles ? company.roles.map((r: any) => r.title) : []
-          )
+            company.roles ? company.roles.map((r: any) => r.title?.trim()) : []
+          ).filter(Boolean)
         )).sort()
 
         setRoles(uniqueRoles as string[])
@@ -51,18 +51,19 @@ export default function CompaniesPage() {
       })
   }, [token])
 
-  const filtered = companies.filter(c => {
+  const filtered = companies.filter((c: any) => {
     if (selectedRole === "All") return true
     return c.roles && c.roles.some((r: any) => r.title === selectedRole)
   })
 
   return (
-    <div className="relative w-full sm:w-64">
+    <>
+      <div className="relative w-full sm:w-64 mb-8">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full h-12 rounded-xl border border-border bg-black text-white px-4 flex items-center justify-between"
       >
-        <span>{selectedRole === "all" ? "All Roles" : selectedRole}</span>
+        <span>{selectedRole === "All" ? "All Roles" : selectedRole}</span>
         <ChevronRight
           className={`h-4 w-4 transition-transform ${
             isOpen ? "rotate-90" : ""
@@ -71,10 +72,10 @@ export default function CompaniesPage() {
       </button>
     
       {isOpen && (
-        <div className="absolute top-full left-0 w-full bg-black border border-border rounded-xl mt-2 shadow-2xl z-50">
+        <div className="absolute top-full left-0 w-full bg-black/95 backdrop-blur-sm border border-border rounded-xl mt-2 shadow-2xl z-[9999]">
           <div
             onClick={() => {
-              setSelectedRole("all")
+              setSelectedRole("All")
               setIsOpen(false)
             }}
             className="px-4 py-3 hover:bg-zinc-800 cursor-pointer"
@@ -82,7 +83,7 @@ export default function CompaniesPage() {
             All Roles
           </div>
     
-          {roles.map((role) => (
+          {roles.map((role: string) => (
             <div
               key={role}
               onClick={() => {
@@ -96,7 +97,7 @@ export default function CompaniesPage() {
           ))}
         </div>
       )}
-    </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {loading ? (
@@ -133,7 +134,7 @@ export default function CompaniesPage() {
             </div>
           </motion.div>
         ) : (
-          filtered.map((company, idx) => {
+          filtered.map((company: any, idx: number) => {
             const logoUrl = company.logo
               ? (company.logo.startsWith('http') ? company.logo : `${process.env.NEXT_PUBLIC_API_URL}${company.logo}`)
               : "/favicon.ico"
@@ -147,7 +148,7 @@ export default function CompaniesPage() {
                         src={logoUrl}
                         alt={company.name}
                         className="max-h-full max-w-full object-contain"
-                        onError={(e) => (e.currentTarget.src = "/favicon.ico")}
+                        onError={(e: any) => (e.currentTarget.src = "/favicon.ico")}
                       />
                     </div>
                     <div className="min-w-0 pt-1">
@@ -202,6 +203,6 @@ export default function CompaniesPage() {
           })
         )}
       </div>
-    </div>
+    </>
   )
 }
