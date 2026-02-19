@@ -72,21 +72,21 @@ export default function CompaniesPage() {
           <p className="text-muted-foreground max-w-lg">Connect with organizations offering internship specialized opportunities.</p>
         </div>
 
-        <div className="group relative w-full md:w-80">
+        <div className="relative z-50 w-full sm:w-64">
           <Select value={selectedRole} onValueChange={setSelectedRole}>
-            <SelectTrigger className="relative w-full h-14 bg-foreground/5 border-border rounded-2xl text-foreground focus:ring-cyan-500/50 transition-all">
-              <div className="flex items-center gap-3">
-                <Filter className="h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="Select a role" />
-              </div>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Roles" />
             </SelectTrigger>
-            <SelectContent className="bg-popover border-border text-popover-foreground">
-              <SelectItem value="All">All Roles</SelectItem>
-              {roles.map((role) => (
-                <SelectItem key={role} value={role}>
-                  {role}
-                </SelectItem>
-              ))}
+        
+            <SelectContent
+              position="popper"
+              className="z-50"
+              sideOffset={5}
+            >
+              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value="content">Content Creator</SelectItem>
+              <SelectItem value="support">Flight Support Trainee</SelectItem>
+              <SelectItem value="hr">HR Interns</SelectItem>
             </SelectContent>
           </Select>
         </div>
